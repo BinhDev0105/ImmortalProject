@@ -1,0 +1,6 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/GameAssembly/UI/LoadingUI.uss?fileID=7433441132597879392&amp;guid=7db6b3f2a3781d1469a8c836f00c73f2&amp;type=3#LoadingUI" />
+    <engine:VisualElement style="flex-grow: 1; flex-direction: column-reverse;">
+        <engine:ProgressBar value="0" name="LoadingBar" style="-unity-background-image-tint-color: rgb(255, 255, 255); background-color: rgba(0, 0, 0, 0);" />
+    </engine:VisualElement>
+</engine:UXML>

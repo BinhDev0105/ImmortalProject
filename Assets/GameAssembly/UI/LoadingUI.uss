@@ -1,0 +1,25 @@
+VisualElement > #LoadingBar > #unity-progress-bar {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+VisualElement > #LoadingBar > #unity-progress-bar > .unity-progress-bar__background {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0.4);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+}
+
+VisualElement > #LoadingBar > #unity-progress-bar > .unity-progress-bar__background > .unity-progress-bar__progress {
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgba(255, 255, 255, 0.5);
+}
