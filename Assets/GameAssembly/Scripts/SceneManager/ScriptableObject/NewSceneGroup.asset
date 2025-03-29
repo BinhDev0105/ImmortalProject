@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: NewSceneGroup
   m_EditorClassIdentifier: 
   playerAttributes:
-    key: 2
+    key: 4
     value:
-      list: []
-    keys: 010000000000000002000000
-    values:
-    - list: []
-    - list: []
-    - list: []
+      list:
+      - m_LabelString: lobbyscene
+      a: 2
+      b: 1
+    keys: 
+    values: []

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace GameUtilities.Runtime.Collection
 {
@@ -9,7 +10,7 @@ namespace GameUtilities.Runtime.Collection
     /// Sử dụng cùng với SerializableDictionaryDrawer có MultiColumnListView để hiển thị
     /// </summary>
     [Serializable]
-    public class Dictionary<TKey, TValue> : ISerializationCallbackReceiver
+    public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiver
     {
         // Dictionary thực tế lưu trữ dữ liệu trong runtime
         [NonSerialized]

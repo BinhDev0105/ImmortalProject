@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using GameUtilities.Runtime.Collection;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
-using SerializedScriptableObject = GameUtilities.Runtime.SerializedScriptableObject;
 
 namespace GameAssembly.Scripts.SceneManager
 {
@@ -13,13 +11,15 @@ namespace GameAssembly.Scripts.SceneManager
     public class SceneGroup : ScriptableObject
     {
         [DictionaryDrawer]
-        public GameUtilities.Runtime.Collection.Dictionary<int, SceneGroupData> playerAttributes;
+        public SerializableDictionary<int, SceneGroupData> playerAttributes;
     }
 
     [Serializable]
     public class SceneGroupData
     {
         public List<AssetLabelReference> list;
+        public int a;
+        public float b;
     }
 
     [Serializable]
