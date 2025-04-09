@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
   m_GUID: 67bc38ab0a30aba4a94e162a82ad84a7
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 2e0ab2ef5b140fc4c93a95be039f4db3
+    m_Address: Assets/Game.Core/Scenes/Authentication.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4d4dd94dc26328a41ad8d6f7c6a8be35, type: 2}
   m_SchemaSet:
