@@ -9,7 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
-namespace Game.Core.Runtime.Scripts.GameSceneManager
+namespace Game.Core.Scripts.GameSceneManager
 {
     public class SceneGroupManager
     {

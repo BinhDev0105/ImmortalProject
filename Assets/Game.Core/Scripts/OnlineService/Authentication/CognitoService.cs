@@ -57,36 +57,28 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             {
                 if (string.IsNullOrEmpty(username))
                 {
-#if UNITY_EDITOR
                     Log.Error("Username is null or empty for secret hash calculation");
                     throw new ArgumentException("Username cannot be null or empty for secret hash calculation");
-#endif
                 }
                 
                 username = username.Trim();
-#if UNITY_EDITOR
                 Log.Debug($"Calculating secret hash for username: '{username}'");
                 Log.Debug($"Using ClientId: '{ClientId}'");
-#endif
+                
                 var message = username + ClientId;
-#if UNITY_EDITOR
                 Log.Debug($"Message to hash: '{message}'");
-#endif
+                
                 using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(ClientSecret));
                 var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(message));
                 
                 var result = Convert.ToBase64String(hash);
-#if UNITY_EDITOR
                 Log.Debug($"Generated secret hash: '{result}'");
-#endif
                 return result;
             }
             catch (Exception ex)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error calculating secret hash: {ex.Message}\nStack trace: {ex.StackTrace}");
                 throw;
-#endif
             }
         }
 
@@ -158,51 +150,41 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         {
             try
             {
-#if UNITY_EDITOR
                 Log.Debug($"Starting sign in for user: {username}");
-#endif
+                
                 var user = _userPool.GetUser(username);
                 if (user == null)
                 {
-#if UNITY_EDITOR
                     Log.Warning("Failed to get user from pool");
                     throw new Exception("Failed to get user from pool");
-#endif
                 }
 
                 var authRequest = new InitiateSrpAuthRequest 
                 { 
                     Password = password
                 };
-#if UNITY_EDITOR
+
                 Log.Debug("Starting SRP authentication...");
-#endif
                 var ret = await user.StartWithSrpAuthAsync(authRequest);
                 
                 if (ret.AuthenticationResult != null)
                 {
                     _user = user;
-#if UNITY_EDITOR
                     Log.Debug($"Sign in successful - Access Token: {ret.AuthenticationResult.AccessToken}");
                     Log.Debug($"Sign in successful - ID Token: {ret.AuthenticationResult.IdToken}");
                     Log.Debug($"Sign in successful - Refresh Token: {ret.AuthenticationResult.RefreshToken}");
-#endif
                     return ret;
                 }
                 else
                 {
-#if UNITY_EDITOR
                     Log.Warning("Sign in failed - no authentication result");
                     throw new Exception("Sign in failed - no authentication result");
-#endif
                 }
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error in SignInAsync: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -218,16 +200,12 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 try
                 {
                     await _user.GlobalSignOutAsync();
-#if UNITY_EDITOR
                     Log.Debug("Successfully signed out");
-#endif
                 }
                 catch (Exception e)
                 {
-#if UNITY_EDITOR
                     Log.Error($"Error signing out: {e.Message}");
                     throw;
-#endif
                 }
             }
         }
@@ -265,17 +243,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 };
 
                 var response = await _provider.SignUpAsync(signUpRequest);
-#if UNITY_EDITOR
                 Log.Debug($"SignUp Response: {response.HttpStatusCode}");
-#endif
                 return response;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error signing up: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -299,17 +273,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 };
 
                 var response = await _provider.ConfirmSignUpAsync(request);
-#if UNITY_EDITOR
                 Log.Debug($"ConfirmSignUp Response: {response.HttpStatusCode}");
-#endif
                 return response;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error confirming sign up: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -331,17 +301,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 };
 
                 var response = await _provider.ForgotPasswordAsync(request);
-#if UNITY_EDITOR
                 Log.Debug($"ForgotPassword Response: {response.HttpStatusCode}");
-#endif
                 return response;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error initiating forgot password: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -367,17 +333,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 };
 
                 var response = await _provider.ConfirmForgotPasswordAsync(request);
-#if UNITY_EDITOR
                 Log.Debug($"ConfirmForgotPassword Response: {response.HttpStatusCode}");
-#endif
                 return response;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error confirming forgot password: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -399,17 +361,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 };
 
                 var response = await _provider.ResendConfirmationCodeAsync(request);
-#if UNITY_EDITOR
                 Log.Debug($"ResendConfirmationCode Response: {response.HttpStatusCode}");
-#endif
                 return response;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error resending confirmation code: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -432,37 +390,30 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                     Username = username,
                     UserPoolId = UserPoolId
                 };
-#if UNITY_EDITOR
+
                 Log.Debug($"AdminGetUser Request:");
                 Log.Debug($"- Username: {username}");
                 Log.Debug($"- UserPoolId: {UserPoolId}");
-#endif
+
                 var response = await _provider.AdminGetUserAsync(request);
-#if UNITY_EDITOR
                 Log.Debug($"GetUser Response: {response.HttpStatusCode}");
-#endif
+                
                 var subAttribute = response.UserAttributes.Find(attr => attr.Name == "sub");
                 if (subAttribute != null)
                 {
-#if UNITY_EDITOR
                     Log.Debug($"Found User ID: {subAttribute.Value}");
-#endif
                     return subAttribute.Value;
                 }
                 else
                 {
-#if UNITY_EDITOR
                     Log.Warning("User ID (sub) not found in user attributes");
-#endif
                     return null;
                 }
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error getting user ID: {e.Message}");
                 throw;
-#endif
             }
         }
 
@@ -489,15 +440,12 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         {
             try
             {
-#if UNITY_EDITOR
                 Log.Debug("Checking Cognito connection...");
-#endif
+                
                 var user = _userPool.GetUser(username);
                 if (user == null)
                 {
-#if UNITY_EDITOR
                     Log.Warning("Failed to get user from pool");
-#endif
                     return false;
                 }
 
@@ -509,22 +457,17 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 var authResponse = await user.StartWithSrpAuthAsync(authRequest);
                 if (authResponse.AuthenticationResult == null)
                 {
-#if UNITY_EDITOR
                     Log.Warning("Failed to authenticate user");
-#endif
                     return false;
                 }
-#if UNITY_EDITOR
+
                 Log.Debug("Successfully connected to Cognito");
                 Log.Debug($"User authenticated: {username}");
-#endif
                 return true;
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error($"Error checking Cognito connection: {e.Message}");
-#endif
                 return false;
             }
         }

@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eflatun.SceneReference;
+
 // ReSharper disable InconsistentNaming
 
-namespace Game.Core.Runtime.Scripts.GameSceneManager
+namespace Game.Core.Scripts.GameSceneManager
 {
     [Serializable]
     public class SceneGroup

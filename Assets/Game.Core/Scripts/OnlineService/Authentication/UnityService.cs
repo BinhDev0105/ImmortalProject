@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Game.Core.Scripts.GameSceneManager;
 using Unity.Logging;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -12,10 +13,6 @@ namespace Game.Core.Scripts.OnlineService.Authentication
     /// </summary>
     public class UnityService
     {
-        public UnityService()
-        {
-        }
-
         /// <summary>
         /// Start unity service
         /// </summary>
@@ -27,41 +24,39 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
             catch (Exception e)
             {
-#if UNITY_EDITOR
                 Log.Error(e);
-#endif
             }
         }
         
         /// <summary>
         /// Sign in with unity openid 
         /// </summary>
-        /// <param name="idProviderName">OICD</param>
+        /// <param name="idProviderName">OIDC</param>
         /// <param name="idToken">User token</param>
-        public async Task SignInWithOpenIdConnectAsync(string idProviderName, string idToken)
+        public async Task<bool> SignInWithOpenIdConnectAsync(string idProviderName, string idToken)
         {
             try
             {
                 await AuthenticationService.Instance.SignInWithOpenIdConnectAsync(idProviderName, idToken);
-#if UNITY_EDITOR
-                Log.Debug("SignIn is successful.");
-#endif
+
+                await SceneLoader.Instance.LoadSceneGroup(1);
+                
+                return true;
             }
             catch (AuthenticationException ex)
             {
                 // Compare error code to AuthenticationErrorCodes
                 // Notify the player with the proper error message
-#if UNITY_EDITOR
+
                 Log.Error(ex);
-#endif
+                return false;
             }
             catch (RequestFailedException ex)
             {
                 // Compare error code to CommonErrorCodes
                 // Notify the player with the proper error message
-#if UNITY_EDITOR
                 Log.Error(ex);
-#endif
+                return false;
             }
         }
     }

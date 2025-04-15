@@ -129,6 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1151266770}
   - component: {fileID: 1151266771}
+  - component: {fileID: 1151266774}
+  - component: {fileID: 1151266773}
   m_Layer: 0
   m_Name: Authentication
   m_TagString: Untagged
@@ -170,6 +172,33 @@ MonoBehaviour:
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+--- !u!114 &1151266773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151266769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee43a38bbfdb4d81af4a092b7d58f185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiDocument: {fileID: 1151266771}
+  loadingSpeed: 45
+--- !u!114 &1151266774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151266769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d79fe27a9d844aff96ad6b56a9814907, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unParentOnAwake: 1
 --- !u!1 &1169390876
 GameObject:
   m_ObjectHideFlags: 0

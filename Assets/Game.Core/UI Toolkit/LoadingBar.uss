@@ -1,3 +1,7 @@
-#loading-bar > #unity-progress-bar > .unity-progress-bar__background > .unity-progress-bar__progress {
-    background-color: rgba(21, 255, 0, 0.5);
+VisualElement > #loading-bar > #unity-progress-bar > .unity-progress-bar__background {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+VisualElement > #loading-bar > #unity-progress-bar > .unity-progress-bar__background > .unity-progress-bar__progress {
+    background-color: rgb(0, 255, 0);
 }

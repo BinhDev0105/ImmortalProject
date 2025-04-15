@@ -644,7 +644,13 @@ MonoBehaviour:
     - Reference:
         asset: {fileID: 102900000, guid: 2e0ab2ef5b140fc4c93a95be039f4db3, type: 3}
         guid: 2e0ab2ef5b140fc4c93a95be039f4db3
-      SceneType: 0
+      SceneType: 1
+  - GroupName: MainMenu
+    Scenes:
+    - Reference:
+        asset: {fileID: 102900000, guid: 159632a2da5901946871d174c3af2f34, type: 3}
+        guid: 159632a2da5901946871d174c3af2f34
+      SceneType: 2
 --- !u!114 &1913116717
 MonoBehaviour:
   m_ObjectHideFlags: 0

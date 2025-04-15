@@ -1,14 +1,16 @@
 using System;
 using System.Threading.Tasks;
+using Game.Core.Runtime.Scripts.Utility;
 using Unity.Logging;
+using Unity.Logging.Sinks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 // ReSharper disable InconsistentNaming
 
-namespace Game.Core.Runtime.Scripts.GameSceneManager
+namespace Game.Core.Scripts.GameSceneManager
 {
-    public class SceneLoader : MonoBehaviour
+    public class SceneLoader : PersistentSingleton<SceneLoader>
     {
         public UIDocument UIDocument;
         public float fillSpeed = 0.5f;
@@ -25,10 +27,16 @@ namespace Game.Core.Runtime.Scripts.GameSceneManager
             {
                 UIDocument = GetComponent<UIDocument>();
             }
-
+            var logConfig = new LoggerConfig()
+                .MinimumLevel.Debug()
+                .OutputTemplate("{Level} - {Message}")
+                .WriteTo.File("logs/log-output.txt", minLevel: LogLevel.Verbose)
+                .WriteTo.UnityEditorConsole()
+                .CreateLogger();
+            Log.Logger = logConfig;
             _loadingBar = UIDocument.rootVisualElement.Q<ProgressBar>("loading-bar");
+
             Log.Debug("Loading scene groups...");
-            Log.Debug($"High value: {_loadingBar.highValue}");
         }
 
         private void Awake()
@@ -65,14 +73,13 @@ namespace Game.Core.Runtime.Scripts.GameSceneManager
             _loadingBar.style.color = _loadingBar.value >= _loadingBar.highValue / 2 ? Color.white : Color.black;
         }
 
-        private async Task LoadSceneGroup(int index)
+        public async Task LoadSceneGroup(int index)
         {
             _loadingBar.value = 0;
             _loadingBar.highValue = 1f;
             if (index < 0 || index >= SceneGroups.Length)
             {
-                Log.Error($"Invalid scene group index: {index}");
-                return;
+                throw new Exception($"Invalid scene group index: {index}");
             }
             
             LoadingProgress progress = new LoadingProgress();

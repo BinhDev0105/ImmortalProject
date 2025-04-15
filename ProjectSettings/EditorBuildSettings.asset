@@ -8,10 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Game.Core/Scenes/Bootstrapper.unity
     guid: e9f826364f54f534599421676d401774
-  - enabled: 1
-    path: Assets/Game.Core/Scenes/Authentication.unity
-    guid: 2e0ab2ef5b140fc4c93a95be039f4db3
   m_configObjects:
-    com.unity.addressableassets: {fileID: 11400000, guid: af9148130de199a479f026f576036a90, type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: a223acc3b5a35e44999d3b5b30cae34a, type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: dc70d2c4f369241dd99afd7c451b813e, type: 3}
   m_UseUCBPForAssetBundles: 0
