@@ -49,25 +49,56 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         #region Event Handlers Storage
         
         // Store event handlers so we can unregister them
+        // Common Handlers
+        private EventCallback<ClickEvent> _exitHandler;
+        
+        // Sign In Handlers
         private EventCallback<ClickEvent> _signInHandler;
-        private EventCallback<ClickEvent> _signUpHandler;
         private EventCallback<ClickEvent> _forgotPasswordHandler;
-        private EventCallback<ChangeEvent<bool>> _showPasswordHandler;
-        private EventCallback<ChangeEvent<bool>> _showConfirmPasswordHandler;
+        private EventCallback<ClickEvent> _signInToSignUpHandler;
+        private EventCallback<ChangeEvent<bool>> _signInShowPasswordHandler;
         private EventCallback<ChangeEvent<bool>> _rememberMeHandler;
-        private EventCallback<InputEvent> _usernameInputHandler;
-        private EventCallback<InputEvent> _passwordInputHandler;
-        private EventCallback<InputEvent> _emailInputHandler;
-        private EventCallback<InputEvent> _confirmPasswordInputHandler;
-        private EventCallback<InputEvent> _codeInputHandler;
+        private EventCallback<InputEvent> _signInUsernameInputHandler;
+        private EventCallback<InputEvent> _signInPasswordInputHandler;
+        
+        // Sign Up Handlers
+        private EventCallback<ClickEvent> _signUpHandler;
+        private EventCallback<ClickEvent> _signUpToSignInHandler;
+        private EventCallback<ChangeEvent<bool>> _signUpShowPasswordHandler;
+        private EventCallback<ChangeEvent<bool>> _signUpShowConfirmPasswordHandler;
+        private EventCallback<InputEvent> _signUpEmailInputHandler;
+        private EventCallback<InputEvent> _signUpUsernameInputHandler;
+        private EventCallback<InputEvent> _signUpPasswordInputHandler;
+        private EventCallback<InputEvent> _signUpConfirmPasswordInputHandler;
+        
+        // Forgot Password Handlers
+        private EventCallback<ClickEvent> _resetPasswordUiHandler;
+        private EventCallback<ClickEvent> _forgotPasswordBackHandler;
+        private EventCallback<InputEvent> _forgotPasswordEmailInputHandler;
+        
+        // Reset Password Handlers
+        private EventCallback<ClickEvent> _changePasswordHandler;
+        private EventCallback<ClickEvent> _resetPasswordBackHandler;
+        private EventCallback<ChangeEvent<bool>> _resetShowPasswordHandler;
+        private EventCallback<ChangeEvent<bool>> _resetShowConfirmPasswordHandler;
+        private EventCallback<InputEvent> _resetPasswordCodeInputHandler;
+        private EventCallback<InputEvent> _resetPasswordPasswordInputHandler;
+        private EventCallback<InputEvent> _resetPasswordConfirmPasswordInputHandler;
+
+        // Confirm Account Handlers
+        private EventCallback<ClickEvent> _confirmAccountHandler;
+        private EventCallback<ClickEvent> _resendCodeHandler;
+        private EventCallback<ClickEvent> _confirmAccountBackHandler;
+        private EventCallback<InputEvent> _confirmAccountCodeInputHandler;
         
         #endregion
 
-        #region Clear Methods
+        #region Field Clearing Methods
 
         /// <summary>
-        /// Clears a text field's value
+        /// Clears the value of a specified TextField.
         /// </summary>
+        /// <param name="field">The TextField to clear.</param>
         private void ClearTextField(TextField field)
         {
             if (field != null)
@@ -77,8 +108,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Clears all fields in the signin form based on remember me setting
+        /// Clears the username and password fields in the sign-in form if 'Remember Me' is not checked.
         /// </summary>
+        /// <param name="rememberMe">Indicates whether the 'Remember Me' toggle is checked.</param>
         private void ClearSignInFields(bool rememberMe)
         {
             if (rememberMe) return;
@@ -89,7 +121,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Clears all fields in the signup form
+        /// Clears all input fields in the sign-up form.
         /// </summary>
         private void ClearSignUpFields()
         {
@@ -101,7 +133,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Clears all fields in the forgot password form
+        /// Clears the email field in the forgot password form.
         /// </summary>
         private void ClearForgotPasswordFields()
         {
@@ -110,7 +142,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Clears all fields in the reset password form
+        /// Clears all input fields in the reset password form.
         /// </summary>
         private void ClearResetPasswordFields()
         {
@@ -121,7 +153,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Clears all fields in the confirm account form
+        /// Clears the code input field in the confirm account form.
         /// </summary>
         private void ClearConfirmAccountFields()
         {
@@ -131,26 +163,35 @@ namespace Game.Core.Scripts.OnlineService.Authentication
 
         #endregion
 
-        #region Unity Lifecycle
+        #region Unity Lifecycle Methods
 
+        /// <summary>
+        /// Called when the script instance is being enabled. Initializes UI and subscribes to events.
+        /// </summary>
         private void OnEnable()
         {
             InitializeUI();
-            SubscribeToEvents();
         }
 
+        /// <summary>
+        /// Called when the script instance is being disabled. Unregisters UI callbacks and unsubscribes from events.
+        /// </summary>
         private void OnDisable()
         {
             UnregisterUICallbacks();
-            UnsubscribeFromEvents();
         }
 
+        /// <summary>
+        /// Called when the script instance is being destroyed. Ensures cleanup of UI callbacks and event subscriptions.
+        /// </summary>
         private void OnDestroy()
         {
             UnregisterUICallbacks();
-            UnsubscribeFromEvents();
         }
 
+        /// <summary>
+        /// Called every frame. Updates the loading indicator animation if visible.
+        /// </summary>
         private void Update()
         {
             UpdateLoader();
@@ -158,48 +199,62 @@ namespace Game.Core.Scripts.OnlineService.Authentication
 
         #endregion
 
-        #region Event Subscription
+        #region Authentication Event Handling
 
-        private void SubscribeToEvents()
+        /// <summary>
+        /// Handles the successful signin event from AuthenticationManager. Clears relevant fields.
+        /// </summary>
+        public void HandleSignInSuccess()
         {
-            var authManager = AuthenticationManager.Instance;
-            if (authManager != null)
-            {
-                authManager.OnPasswordChangeSuccess += HandlePasswordChangeSuccess;
-                authManager.OnAccountConfirmationSuccess += HandleAccountConfirmationSuccess;
-            }
+            HideLoader();
         }
 
-        private void UnsubscribeFromEvents()
+        /// <summary>
+        /// Handles the successful signup event from AuthenticationManager. Clears relevant fields.
+        /// </summary>
+        public void HandleSignUpSuccess()
         {
-            var authManager = AuthenticationManager.Instance;
-            if (authManager != null)
-            {
-                authManager.OnPasswordChangeSuccess -= HandlePasswordChangeSuccess;
-                authManager.OnAccountConfirmationSuccess -= HandleAccountConfirmationSuccess;
-            }
+            HideLoader();
         }
 
-        private void HandlePasswordChangeSuccess()
+        /// <summary>
+        /// Handles the successful reset password event from AuthenticationManager. Clears relevant fields.
+        /// </summary>
+        public void HandleResetPasswordSuccess()
+        {
+            HideLoader();
+        }
+        
+        /// <summary>
+        /// Handles the successful password change event from AuthenticationManager. Clears relevant fields.
+        /// </summary>
+        public void HandlePasswordChangeSuccess()
         {
             ClearForgotPasswordFields();
             ClearResetPasswordFields();
-            SwitchUIState(UIState.SignIn);
+            HideForgotPasswordValidationError();
+            HideResetPasswordValidationError();
+            HideLoader();
         }
 
-        private void HandleAccountConfirmationSuccess()
+        /// <summary>
+        /// Handles the successful account confirmation event from AuthenticationManager. Clears relevant fields.
+        /// </summary>
+        public void HandleAccountConfirmationSuccess()
         {
+            HideSignUpValidationError();
             ClearSignUpFields();
+            HideConfirmAccountValidationError();
             ClearConfirmAccountFields();
-            SwitchUIState(UIState.SignIn);
+            HideLoader();
         }
 
         #endregion
 
-        #region Initialization
+        #region UI Initialization
 
         /// <summary>
-        /// Initializes all UI components and sets up the initial state
+        /// Initializes all UI components, sets up the initial state, registers callbacks, and loads remembered account data.
         /// </summary>
         private void InitializeUI()
         {
@@ -228,7 +283,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Registers all UI element callbacks
+        /// Registers callbacks for all UI panels (Sign In, Sign Up, Forgot Password, etc.).
         /// </summary>
         private void RegisterUICallbacks()
         {
@@ -244,8 +299,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         #region UI State Management
 
         /// <summary>
-        /// Switches the UI to display the specified authentication state
+        /// Switches the visible UI panel based on the target authentication state. Hides all other panels. Clears Sign In fields if navigating away and 'Remember Me' is off.
         /// </summary>
+        /// <param name="state">The UIState to transition to.</param>
         private void SwitchUIState(UIState state)
         {
             // If switching from SignIn to another state, check RememberMe
@@ -283,8 +339,10 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Gets the VisualElement panel corresponding to the given UI state
+        /// Retrieves the VisualElement panel corresponding to the specified UIState.
         /// </summary>
+        /// <param name="state">The UIState whose panel is needed.</param>
+        /// <returns>The VisualElement for the state, or null if not found.</returns>
         private VisualElement GetPanelForState(UIState state)
         {
             return state switch
@@ -300,11 +358,15 @@ namespace Game.Core.Scripts.OnlineService.Authentication
 
         #endregion
 
-        #region UI Event Registration
+        #region UI Callback Registration
 
+        /// <summary>
+        /// Registers all callbacks for the Sign In panel UI elements.
+        /// </summary>
         private void RegisterSignInCallbacks()
         {
             var signIn = GetPanelForState(UIState.SignIn);
+            var exitButton = signIn.Q<Button>("exit-button");
             var signInButton = signIn.Q<Button>("sign-in-button");
             var forgotPasswordButton = signIn.Q<Button>("forgot-password-ui-button");
             var signUpButton = signIn.Q<Button>("sign-up-ui-button");
@@ -314,12 +376,14 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var usernameField = signIn.Q<TextField>("username");
 
             // Store handlers
+            _exitHandler = _ => HandleExit();
             _signInHandler = _ => HandleSignIn();
             _forgotPasswordHandler = _ => SwitchUIState(UIState.ForgotPassword);
-            _showPasswordHandler = evt => passwordField.isPasswordField = !evt.newValue;
+            _signInToSignUpHandler = _ => HandleSignInToSignUp();
+            _signInShowPasswordHandler = evt => passwordField.isPasswordField = !evt.newValue;
             _rememberMeHandler = evt => HandleRememberMe(evt.newValue);
-            _usernameInputHandler = evt => HideValidationError(evt.target as VisualElement, "username-validate");
-            _passwordInputHandler = evt =>
+            _signInUsernameInputHandler = evt => HideValidationError(evt.target as VisualElement, "username-validate");
+            _signInPasswordInputHandler = evt =>
             {
                 HideValidationError(evt.target as VisualElement, "password-validate");
                 HideValidationError(evt.target as VisualElement, "password-length-validate");
@@ -329,27 +393,21 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 HideValidationError(evt.target as VisualElement, "password-number-validate");
             };
             // Register handlers
+            exitButton.RegisterCallback(_exitHandler);
             signInButton.RegisterCallback(_signInHandler);
             forgotPasswordButton.RegisterCallback(_forgotPasswordHandler);
-            signUpButton.RegisterCallback(new EventCallback<ClickEvent>(_ =>
-            {
-                HideValidationError(usernameField, "username-validate");
-                HideValidationError(passwordField, "password-validate");
-                HideValidationError(passwordField, "password-length-validate");
-                HideValidationError(passwordField, "password-special-validate");
-                HideValidationError(passwordField, "password-upper-case-validate");
-                HideValidationError(passwordField, "password-lower-case-validate");
-                HideValidationError(passwordField, "password-number-validate");
-                SwitchUIState(UIState.SignUp);
-            }));
-            showPasswordToggle.RegisterCallback(_showPasswordHandler);
+            signUpButton.RegisterCallback(_signInToSignUpHandler);
+            showPasswordToggle.RegisterCallback(_signInShowPasswordHandler);
             rememberToggle.RegisterCallback(_rememberMeHandler);
 
             // Register input handlers to hide validation errors
-            usernameField.RegisterCallback(_usernameInputHandler);
-            passwordField.RegisterCallback(_passwordInputHandler);
+            usernameField.RegisterCallback(_signInUsernameInputHandler);
+            passwordField.RegisterCallback(_signInPasswordInputHandler);
         }
 
+        /// <summary>
+        /// Unregisters all callbacks for the Sign In panel UI elements.
+        /// </summary>
         private void UnregisterSignInCallbacks()
         {
             if (_root == null) return;
@@ -357,27 +415,41 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var signIn = GetPanelForState(UIState.SignIn);
             if (signIn == null) return;
 
+            var exitButton = signIn.Q<Button>("exit-button");
             var signInButton = signIn.Q<Button>("sign-in-button");
             var forgotPasswordButton = signIn.Q<Button>("forgot-password-ui-button");
+            var signUpButton = signIn.Q<Button>("sign-up-ui-button");
             var showPasswordToggle = signIn.Q<Toggle>("show-password");
             var rememberToggle = signIn.Q<Toggle>("remember-toggle");
+
+            if (_exitHandler != null && exitButton != null)
+            {
+                exitButton.UnregisterCallback(_exitHandler);
+            }
 
             if (_signInHandler != null && signInButton != null)
                 signInButton.UnregisterCallback(_signInHandler);
 
             if (_forgotPasswordHandler != null && forgotPasswordButton != null)
                 forgotPasswordButton.UnregisterCallback(_forgotPasswordHandler);
+                
+            if (_signInToSignUpHandler != null && signUpButton != null)
+                signUpButton.UnregisterCallback(_signInToSignUpHandler);
 
-            if (_showPasswordHandler != null && showPasswordToggle != null)
-                showPasswordToggle.UnregisterCallback(_showPasswordHandler);
+            if (_signInShowPasswordHandler != null && showPasswordToggle != null)
+                showPasswordToggle.UnregisterCallback(_signInShowPasswordHandler);
 
             if (_rememberMeHandler != null && rememberToggle != null)
                 rememberToggle.UnregisterCallback(_rememberMeHandler);
         }
 
+        /// <summary>
+        /// Registers all callbacks for the Sign Up panel UI elements.
+        /// </summary>
         private void RegisterSignUpCallbacks()
         {
             var signUp = GetPanelForState(UIState.SignUp);
+            var exitButton = signUp.Q<Button>("exit-button");
             var signUpButton = signUp.Q<Button>("sign-up-button");
             var signInButton = signUp.Q<Button>("sign-in-ui-button");
             var showPasswordToggle = signUp.Q<Toggle>("show-password");
@@ -388,12 +460,14 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var usernameField = signUp.Q<TextField>("username");
 
             // Store handlers
+            _exitHandler = _ => HandleExit();
             _signUpHandler = _ => HandleSignUp();
-            _showPasswordHandler = evt => passwordField.isPasswordField = !evt.newValue;
-            _showConfirmPasswordHandler = evt => confirmPasswordField.isPasswordField = !evt.newValue;
-            _emailInputHandler = evt => HideValidationError(evt.target as VisualElement, "email-validate");
-            _usernameInputHandler = evt => HideValidationError(evt.target as VisualElement, "username-validate");
-            _passwordInputHandler = evt =>
+            _signUpToSignInHandler = _ => HandleSignUpToSignIn();
+            _signUpShowPasswordHandler = evt => passwordField.isPasswordField = !evt.newValue;
+            _signUpShowConfirmPasswordHandler = evt => confirmPasswordField.isPasswordField = !evt.newValue;
+            _signUpEmailInputHandler = evt => HideValidationError(evt.target as VisualElement, "email-validate");
+            _signUpUsernameInputHandler = evt => HideValidationError(evt.target as VisualElement, "username-validate");
+            _signUpPasswordInputHandler = evt =>
             {
                 HideValidationError(evt.target as VisualElement, "password-validate");
                 HideValidationError(evt.target as VisualElement, "password-length-validate");
@@ -402,33 +476,25 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 HideValidationError(evt.target as VisualElement, "password-lower-case-validate");
                 HideValidationError(evt.target as VisualElement, "password-number-validate");
             };
-            _confirmPasswordInputHandler = evt => HideValidationError(evt.target as VisualElement, "confirm-password-validate");
+            _signUpConfirmPasswordInputHandler = evt => HideValidationError(evt.target as VisualElement, "confirm-password-validate");
 
             // Register handlers
+            exitButton.RegisterCallback(_exitHandler);
             signUpButton.RegisterCallback(_signUpHandler);
-            signInButton.RegisterCallback(new EventCallback<ClickEvent>(_ =>
-            {
-                HideValidationError(emailField, "email-validate");
-                HideValidationError(usernameField, "username-validate");
-                HideValidationError(passwordField, "password-validate");
-                HideValidationError(passwordField, "password-length-validate");
-                HideValidationError(passwordField, "password-special-validate");
-                HideValidationError(passwordField, "password-upper-case-validate");
-                HideValidationError(passwordField, "password-lower-case-validate");
-                HideValidationError(passwordField, "password-number-validate");
-                HideValidationError(confirmPasswordField, "confirm-password-validate");
-                SwitchUIState(UIState.SignIn);
-            }));
-            showPasswordToggle.RegisterCallback(_showPasswordHandler);
-            showConfirmPasswordToggle.RegisterCallback(_showConfirmPasswordHandler);
+            signInButton.RegisterCallback(_signUpToSignInHandler);
+            showPasswordToggle.RegisterCallback(_signUpShowPasswordHandler);
+            showConfirmPasswordToggle.RegisterCallback(_signUpShowConfirmPasswordHandler);
 
             // Register input handlers to hide validation errors
-            emailField.RegisterCallback(_emailInputHandler);
-            usernameField.RegisterCallback(_usernameInputHandler);
-            passwordField.RegisterCallback(_passwordInputHandler);
-            confirmPasswordField.RegisterCallback(_confirmPasswordInputHandler);
+            emailField.RegisterCallback(_signUpEmailInputHandler);
+            usernameField.RegisterCallback(_signUpUsernameInputHandler);
+            passwordField.RegisterCallback(_signUpPasswordInputHandler);
+            confirmPasswordField.RegisterCallback(_signUpConfirmPasswordInputHandler);
         }
 
+        /// <summary>
+        /// Unregisters all callbacks for the Sign Up panel UI elements.
+        /// </summary>
         private void UnregisterSignUpCallbacks()
         {
             if (_root == null) return;
@@ -436,20 +502,33 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var signUp = GetPanelForState(UIState.SignUp);
             if (signUp == null) return;
 
+            var exitButton = signUp.Q<Button>("exit-button");
             var signUpButton = signUp.Q<Button>("sign-up-button");
+            var signInButton = signUp.Q<Button>("sign-in-ui-button");
             var showPasswordToggle = signUp.Q<Toggle>("show-password");
             var showConfirmPasswordToggle = signUp.Q<Toggle>("show-confirm-password");
 
+            if (_exitHandler != null && exitButton != null)
+            {
+                exitButton.UnregisterCallback(_exitHandler);
+            }
+            
             if (_signUpHandler != null && signUpButton != null)
                 signUpButton.UnregisterCallback(_signUpHandler);
+                
+            if (_signUpToSignInHandler != null && signInButton != null)
+                signInButton.UnregisterCallback(_signUpToSignInHandler);
 
-            if (_showPasswordHandler != null && showPasswordToggle != null)
-                showPasswordToggle.UnregisterCallback(_showPasswordHandler);
+            if (_signUpShowPasswordHandler != null && showPasswordToggle != null)
+                showPasswordToggle.UnregisterCallback(_signUpShowPasswordHandler);
 
-            if (_showConfirmPasswordHandler != null && showConfirmPasswordToggle != null)
-                showConfirmPasswordToggle.UnregisterCallback(_showConfirmPasswordHandler);
+            if (_signUpShowConfirmPasswordHandler != null && showConfirmPasswordToggle != null)
+                showConfirmPasswordToggle.UnregisterCallback(_signUpShowConfirmPasswordHandler);
         }
 
+        /// <summary>
+        /// Registers callbacks for the Forgot Password panel UI elements.
+        /// </summary>
         private void RegisterForgotPasswordCallbacks()
         {
             var forgotPassword = GetPanelForState(UIState.ForgotPassword);
@@ -458,20 +537,44 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var emailField = forgotPassword.Q<TextField>("email");
 
             // Store handler
-            _emailInputHandler = evt => HideValidationError(evt.target as VisualElement, "email-validate");
+            _resetPasswordUiHandler = _ => HandleResetPassword();
+            _forgotPasswordBackHandler = _ => HandleForgotPasswordBack();
+            _forgotPasswordEmailInputHandler = evt => HideValidationError(evt.target as VisualElement, "email-validate");
 
-            resetButton.clicked += HandleResetPassword;
-            backButton.clicked += () =>
-            {
-                ClearForgotPasswordFields();
-                HideValidationError(emailField, "email-validate");
-                SwitchUIState(UIState.SignIn);
-            };
+            resetButton.RegisterCallback(_resetPasswordUiHandler);
+            backButton.RegisterCallback(_forgotPasswordBackHandler);
 
             // Register input handler to hide validation error
-            emailField.RegisterCallback(_emailInputHandler);
+            emailField.RegisterCallback(_forgotPasswordEmailInputHandler);
+        }
+        
+        /// <summary>
+        /// Unregisters callbacks for the Forgot Password panel UI elements.
+        /// </summary>
+        private void UnregisterForgotPasswordCallbacks()
+        {
+            if (_root == null) return;
+
+            var forgotPassword = GetPanelForState(UIState.ForgotPassword);
+            if (forgotPassword == null) return;
+
+            var resetButton = forgotPassword.Q<Button>("reset-password-ui-button");
+            var backButton = forgotPassword.Q<Button>("back-button");
+            var emailField = forgotPassword.Q<TextField>("email");
+
+            if (_resetPasswordUiHandler != null && resetButton != null)
+                resetButton.UnregisterCallback(_resetPasswordUiHandler);
+
+            if (_forgotPasswordBackHandler != null && backButton != null)
+                backButton.UnregisterCallback(_forgotPasswordBackHandler);
+
+            if (_forgotPasswordEmailInputHandler != null && emailField != null)
+                emailField.UnregisterCallback(_forgotPasswordEmailInputHandler);
         }
 
+        /// <summary>
+        /// Registers callbacks for the Reset Password panel UI elements.
+        /// </summary>
         private void RegisterResetPasswordCallbacks()
         {
             var resetPassword = GetPanelForState(UIState.ResetPassword);
@@ -484,8 +587,12 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var codeField = resetPassword.Q<TextField>("code");
 
             // Store handlers
-            _codeInputHandler = evt => HideValidationError(evt.target as VisualElement, "code-validate");
-            _passwordInputHandler = evt =>
+            _changePasswordHandler = _ => HandleChangePassword();
+            _resetPasswordBackHandler = _ => HandleResetPasswordBack();
+            _resetShowPasswordHandler = evt => passwordField.isPasswordField = !evt.newValue;
+            _resetShowConfirmPasswordHandler = evt => confirmPasswordField.isPasswordField = !evt.newValue;
+            _resetPasswordCodeInputHandler = evt => HideValidationError(evt.target as VisualElement, "code-validate");
+            _resetPasswordPasswordInputHandler = evt =>
             {
                 HideValidationError(evt.target as VisualElement, "password-validate");
                 HideValidationError(evt.target as VisualElement, "password-length-validate");
@@ -494,34 +601,63 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 HideValidationError(evt.target as VisualElement, "password-lower-case-validate");
                 HideValidationError(evt.target as VisualElement, "password-number-validate");
             };
-            _confirmPasswordInputHandler = evt => HideValidationError(evt.target as VisualElement, "confirm-password-validate");
-
+            _resetPasswordConfirmPasswordInputHandler = evt => HideValidationError(evt.target as VisualElement, "confirm-password-validate");
             
-            changePasswordButton.clicked += HandleChangePassword;
-            backButton.clicked += () =>
-            {
-                ClearResetPasswordFields();
-                HideValidationError(passwordField, "password-validate");
-                HideValidationError(passwordField, "password-length-validate");
-                HideValidationError(passwordField, "password-special-validate");
-                HideValidationError(passwordField, "password-upper-case-validate");
-                HideValidationError(passwordField, "password-lower-case-validate");
-                HideValidationError(passwordField, "password-number-validate");
-                HideValidationError(confirmPasswordField, "confirm-password-validate");
-                HideValidationError(codeField, "code-validate");
-                SwitchUIState(UIState.SignIn);
-            };
-            showPasswordToggle.RegisterValueChangedCallback(evt => 
-                passwordField.isPasswordField = !evt.newValue);
-            showConfirmPasswordToggle.RegisterValueChangedCallback(evt => 
-                confirmPasswordField.isPasswordField = !evt.newValue);
+            changePasswordButton.RegisterCallback(_changePasswordHandler);
+            backButton.RegisterCallback(_resetPasswordBackHandler);
+            
+            showPasswordToggle.RegisterValueChangedCallback(_resetShowPasswordHandler);
+            showConfirmPasswordToggle.RegisterValueChangedCallback(_resetShowConfirmPasswordHandler);
 
             // Register input handlers to hide validation errors
-            codeField.RegisterCallback(_codeInputHandler);
-            passwordField.RegisterCallback(_passwordInputHandler);
-            confirmPasswordField.RegisterCallback(_confirmPasswordInputHandler);
+            codeField.RegisterCallback(_resetPasswordCodeInputHandler);
+            passwordField.RegisterCallback(_resetPasswordPasswordInputHandler);
+            confirmPasswordField.RegisterCallback(_resetPasswordConfirmPasswordInputHandler);
         }
 
+        /// <summary>
+        /// Unregisters callbacks for the Reset Password panel UI elements.
+        /// </summary>
+        private void UnregisterResetPasswordCallbacks()
+        {
+            if (_root == null) return;
+
+            var resetPassword = GetPanelForState(UIState.ResetPassword);
+            if (resetPassword == null) return;
+
+            var changePasswordButton = resetPassword.Q<Button>("change-password-button");
+            var backButton = resetPassword.Q<Button>("back-button");
+            var showPasswordToggle = resetPassword.Q<Toggle>("show-password");
+            var showConfirmPasswordToggle = resetPassword.Q<Toggle>("show-confirm-password");
+            var passwordField = resetPassword.Q<TextField>("password");
+            var confirmPasswordField = resetPassword.Q<TextField>("confirm-password");
+            var codeField = resetPassword.Q<TextField>("code");
+
+            if (_changePasswordHandler != null && changePasswordButton != null)
+                changePasswordButton.UnregisterCallback(_changePasswordHandler);
+
+            if (_resetPasswordBackHandler != null && backButton != null)
+                backButton.UnregisterCallback(_resetPasswordBackHandler);
+
+            if (_resetShowPasswordHandler != null && showPasswordToggle != null)
+                showPasswordToggle.UnregisterCallback(_resetShowPasswordHandler);
+
+            if (_resetShowConfirmPasswordHandler != null && showConfirmPasswordToggle != null)
+                showConfirmPasswordToggle.UnregisterCallback(_resetShowConfirmPasswordHandler);
+
+            if (_resetPasswordPasswordInputHandler != null && passwordField != null)
+                passwordField.UnregisterCallback(_resetPasswordPasswordInputHandler);
+
+            if (_resetPasswordConfirmPasswordInputHandler != null && confirmPasswordField != null)
+                confirmPasswordField.UnregisterCallback(_resetPasswordConfirmPasswordInputHandler);
+
+            if (_resetPasswordCodeInputHandler != null && codeField != null)
+                codeField.UnregisterCallback(_resetPasswordCodeInputHandler);
+        }
+
+        /// <summary>
+        /// Registers callbacks for the Confirm Account panel UI elements.
+        /// </summary>
         private void RegisterConfirmAccountCallbacks()
         {
             var confirmAccount = GetPanelForState(UIState.ConfirmAccount);
@@ -531,40 +667,116 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             var codeField = confirmAccount.Q<TextField>("code");
 
             // Store handler
-            _codeInputHandler = evt => HideValidationError(evt.target as VisualElement, "code-validate");
-
-            confirmButton.clicked += HandleConfirmAccount;
-            resendButton.clicked += HandleResendCode;
-            backButton.clicked += () =>
-            {
-                ClearConfirmAccountFields();
-                HideValidationError(codeField, "code-validate");
-                SwitchUIState(UIState.SignIn);
-            };
+            _confirmAccountHandler = _ => HandleConfirmAccount();
+            _resendCodeHandler = _ => HandleResendCode();
+            _confirmAccountBackHandler = _ => HandleConfirmAccountBack();
+            _confirmAccountCodeInputHandler = evt => HideValidationError(evt.target as VisualElement, "code-validate");
+            
+            confirmButton.RegisterCallback(_confirmAccountHandler);
+            resendButton.RegisterCallback(_resendCodeHandler);
+            backButton.RegisterCallback(_confirmAccountBackHandler);
 
             // Register input handler to hide validation error
-            codeField.RegisterCallback(_codeInputHandler);
+            codeField.RegisterCallback(_confirmAccountCodeInputHandler);
         }
 
+        /// <summary>
+        /// Unregisters callbacks for the Confirm Account panel UI elements.
+        /// </summary>
+        private void UnregisterConfirmAccountCallbacks()
+        {
+            if (_root == null) return;
+
+            var confirmAccount = GetPanelForState(UIState.ConfirmAccount);
+            if (confirmAccount == null) return;
+
+            var confirmButton = confirmAccount.Q<Button>("confirm-account-button");
+            var resendButton = confirmAccount.Q<Button>("resend-code-button");
+            var backButton = confirmAccount.Q<Button>("back-button");
+            var codeField = confirmAccount.Q<TextField>("code");
+
+            if (_confirmAccountHandler != null && confirmButton != null)
+                confirmButton.UnregisterCallback(_confirmAccountHandler);
+
+            if (_resendCodeHandler != null && resendButton != null)
+                resendButton.UnregisterCallback(_resendCodeHandler);
+
+            if (_confirmAccountBackHandler != null && backButton != null)
+                backButton.UnregisterCallback(_confirmAccountBackHandler);
+
+            if (_confirmAccountCodeInputHandler != null && codeField != null)
+                codeField.UnregisterCallback(_confirmAccountCodeInputHandler);
+        }
+
+        /// <summary>
+        /// Unregisters all UI callbacks across all panels and clears handler references.
+        /// </summary>
         private void UnregisterUICallbacks()
         {
             UnregisterSignInCallbacks();
             UnregisterSignUpCallbacks();
-            // Unregister other callbacks...
+            UnregisterForgotPasswordCallbacks();
+            UnregisterResetPasswordCallbacks();
+            UnregisterConfirmAccountCallbacks();
 
             // Clear handler references
+            _exitHandler = null;
+            
+            // Sign In
             _signInHandler = null;
-            _signUpHandler = null;
             _forgotPasswordHandler = null;
-            _showPasswordHandler = null;
-            _showConfirmPasswordHandler = null;
+            _signInToSignUpHandler = null;
+            _signInShowPasswordHandler = null;
             _rememberMeHandler = null;
+            _signInUsernameInputHandler = null;
+            _signInPasswordInputHandler = null;
+            
+            // Sign Up
+            _signUpHandler = null;
+            _signUpToSignInHandler = null;
+            _signUpShowPasswordHandler = null;
+            _signUpShowConfirmPasswordHandler = null;
+            _signUpEmailInputHandler = null;
+            _signUpUsernameInputHandler = null;
+            _signUpPasswordInputHandler = null;
+            _signUpConfirmPasswordInputHandler = null;
+            
+            // Forgot Password
+            _resetPasswordUiHandler = null;
+            _forgotPasswordBackHandler = null;
+            _forgotPasswordEmailInputHandler = null;
+            
+            // Reset Password
+            _changePasswordHandler = null;
+            _resetPasswordBackHandler = null;
+            _resetShowPasswordHandler = null;
+            _resetShowConfirmPasswordHandler = null;
+            _resetPasswordCodeInputHandler = null;
+            _resetPasswordPasswordInputHandler = null;
+            _resetPasswordConfirmPasswordInputHandler = null;
+            
+            // Confirm Account
+            _confirmAccountHandler = null;
+            _resendCodeHandler = null;
+            _confirmAccountBackHandler = null;
+            _confirmAccountCodeInputHandler = null;
         }
 
         #endregion
 
-        #region UI Event Handlers
+        #region UI Action Handlers
 
+        /// <summary>
+        /// Handles the exit button click event, quitting the application.
+        /// </summary>
+        private void HandleExit()
+        {
+            Application.Quit();
+        }
+        
+        /// <summary>
+        /// Handles the sign-in button click. Validates inputs and initiates the sign-in process via AuthenticationManager. Shows loader.
+        /// </summary>
         private void HandleSignIn()
         {
             var signIn = GetPanelForState(UIState.SignIn);
@@ -583,6 +795,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the sign-up button click. Validates inputs and initiates the sign-up process via AuthenticationManager. Shows loader.
+        /// </summary>
         private void HandleSignUp()
         {
             var signUp = GetPanelForState(UIState.SignUp);
@@ -602,6 +817,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the request to reset the password from the Forgot Password screen. Validates email and initiates the reset password process via AuthenticationManager. Shows loader.
+        /// </summary>
         private void HandleResetPassword()
         {
             var forgotPassword = GetPanelForState(UIState.ForgotPassword);
@@ -610,7 +828,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (ValidationService.ValidateEmail(emailField))
             {
                 ShowLoader();
-                StartCoroutine(AuthenticationManager.Instance.ResetPassword(emailField.value));
+                StartCoroutine(AuthenticationManager.Instance.ForgotPassword(emailField.value));
             }
             else
             {
@@ -618,6 +836,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the change password button click on the Reset Password screen. Validates inputs and initiates the change password process via AuthenticationManager. Shows loader.
+        /// </summary>
         private void HandleChangePassword()
         {
             var resetPassword = GetPanelForState(UIState.ResetPassword);
@@ -639,6 +860,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the confirm account button click. Validates inputs and initiates the account confirmation process via AuthenticationManager. Shows loader.
+        /// </summary>
         private void HandleConfirmAccount()
         {
             var confirmAccount = GetPanelForState(UIState.ConfirmAccount);
@@ -667,6 +891,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the resend code button click. Validates username and initiates the resend code process via AuthenticationManager.
+        /// </summary>
         private void HandleResendCode()
         {
             var signUp = GetPanelForState(UIState.SignUp);
@@ -682,6 +909,10 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the state change of the 'Remember Me' toggle. Saves or deletes account data accordingly.
+        /// </summary>
+        /// <param name="isChecked">The new state of the toggle.</param>
         private void HandleRememberMe(bool isChecked)
         {
             var signIn = GetPanelForState(UIState.SignIn);
@@ -703,10 +934,67 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Handles the navigation from the Sign In screen to the SignUp screen. Hides any validation errors on the Sign In screen before switching.
+        /// </summary>
+        private void HandleSignInToSignUp()
+        {
+            HideSignInValidationError();
+            SwitchUIState(UIState.SignUp);
+        }
+
+        /// <summary>
+        /// Handles the navigation from the SignUp screen to the Sign In screen. Hides any validation errors on the Sign Up screen before switching.
+        /// </summary>
+        private void HandleSignUpToSignIn()
+        {
+            HideSignUpValidationError();
+            ClearSignUpFields();
+            SwitchUIState(UIState.SignIn);
+        }
+
+        /// <summary>
+        /// Handles the back button click on the Forgot Password screen. Clears fields, hides validation errors, and switches to the Sign In screen.
+        /// </summary>
+        private void HandleForgotPasswordBack()
+        {
+            ClearForgotPasswordFields();
+            HideForgotPasswordValidationError();
+            SwitchUIState(UIState.SignIn);
+        }
+
+        /// <summary>
+        /// Handles the back button click on the Reset Password screen. Clears fields, hides validation errors, and switches to the Sign In screen.
+        /// </summary>
+        private void HandleResetPasswordBack()
+        {
+            ClearResetPasswordFields();
+            HideResetPasswordValidationError();
+            SwitchUIState(UIState.SignIn);
+        }
+
+        /// <summary>
+        /// Handles the back button click on the Confirm Account screen. Clears fields, hides validation errors, and switches to the Sign In screen.
+        /// </summary>
+        private void HandleConfirmAccountBack()
+        {
+            ClearSignUpFields();
+            HideSignUpValidationError();
+            ClearConfirmAccountFields();
+            HideConfirmAccountValidationError();
+            SwitchUIState(UIState.SignIn);
+        }
+
         #endregion
 
-        #region Validation Methods
+        #region Input Validation Methods
 
+        /// <summary>
+        /// Validates the username and password fields on the Sign In screen using ValidationService. Shows validation errors if inputs are invalid.
+        /// </summary>
+        /// <param name="usernameField">The username TextField.</param>
+        /// <param name="passwordField">The password TextField.</param>
+        /// <returns>True if inputs are valid, false otherwise.</returns>
         private bool ValidateSignInInputs(TextField usernameField, TextField passwordField)
         {
             bool isValid = true;
@@ -731,6 +1019,14 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             return isValid;
         }
 
+        /// <summary>
+        /// Validates the email, username, password, and confirm password fields on the Sign Up screen using ValidationService. Shows validation errors if inputs are invalid.
+        /// </summary>
+        /// <param name="emailField">The email TextField.</param>
+        /// <param name="usernameField">The username TextField.</param>
+        /// <param name="passwordField">The password TextField.</param>
+        /// <param name="confirmPasswordField">The confirmation password TextField.</param>
+        /// <returns>True if inputs are valid, false otherwise.</returns>
         private bool ValidateSignUpInputs(TextField emailField, TextField usernameField, 
             TextField passwordField, TextField confirmPasswordField)
         {
@@ -768,6 +1064,13 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             return isValid;
         }
 
+        /// <summary>
+        /// Validates the code, password, and confirm password fields on the Reset Password screen using ValidationService. Shows validation errors if inputs are invalid.
+        /// </summary>
+        /// <param name="codeField">The code TextField.</param>
+        /// <param name="passwordField">The password TextField.</param>
+        /// <param name="confirmPasswordField">The confirmation password TextField.</param>
+        /// <returns>True if inputs are valid, false otherwise.</returns>
         private bool ValidateChangePasswordInputs(TextField codeField, TextField passwordField, 
             TextField confirmPasswordField)
         {
@@ -799,6 +1102,11 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             return isValid;
         }
 
+        /// <summary>
+        /// Shows the validation error Label associated with a specific input field.
+        /// </summary>
+        /// <param name="field">The input field (or its parent) that failed validation.</param>
+        /// <param name="validationLabelName">The name of the validation Label element.</param>
         private void ShowValidationError(VisualElement field, string validationLabelName)
         {
             var parent = field.parent;
@@ -810,8 +1118,10 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Hides the validation error message for a specific field
+        /// Hides the validation error Label associated with a specific input field. Typically called when the user starts typing in the field.
         /// </summary>
+        /// <param name="field">The input field (or its parent) whose error message should be hidden.</param>
+        /// <param name="validationLabelName">The name of the validation Label element.</param>
         private void HideValidationError(VisualElement field, string validationLabelName)
         {
             var parent = field.parent;
@@ -822,13 +1132,124 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             }
         }
 
+        /// <summary>
+        /// Hides the signin validation error Label associated with a forgot password button. Typically called when the user clicked.
+        /// </summary>
+        private void HideSignInValidationError()
+        {
+            var signIn = GetPanelForState(UIState.SignIn);
+            
+            var usernameValidationLabel = signIn.Q<Label>("username-validate");
+            var passwordValidationLabel = signIn.Q<Label>("password-validate");
+            var passwordLengthValidationLabel = signIn.Q<Label>("password-length-validate");
+            var passwordSpecialValidationLabel = signIn.Q<Label>("password-special-validate");
+            var passwordUpperValidationLabel = signIn.Q<Label>("password-upper-case-validate");
+            var passwordLowerValidationLabel = signIn.Q<Label>("password-lower-case-validate");
+            var passwordNumberValidationLabel = signIn.Q<Label>("password-number-validate");
+            
+            usernameValidationLabel.style.display = DisplayStyle.None;
+            passwordValidationLabel.style.display = DisplayStyle.None;
+            passwordLengthValidationLabel.style.display = DisplayStyle.None;
+            passwordSpecialValidationLabel.style.display = DisplayStyle.None;
+            passwordUpperValidationLabel.style.display = DisplayStyle.None;
+            passwordLowerValidationLabel.style.display = DisplayStyle.None;
+            passwordNumberValidationLabel.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// Hides the forgot password validation error Label associated with a forgot password button. Typically called when the user clicked.
+        /// </summary>
+        private void HideForgotPasswordValidationError()
+        {
+            var forgotPassword = GetPanelForState(UIState.ForgotPassword);
+            
+            var emailValidationLabel = forgotPassword.Q<Label>("email-validate");
+            
+            emailValidationLabel.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// Hides the reset password validation error Label associated with a forgot password button. Typically called when the user clicked.
+        /// </summary>
+        private void HideResetPasswordValidationError()
+        {
+            var resetPassword = GetPanelForState(UIState.ResetPassword);
+            
+            var codeValidationLabel = resetPassword.Q<Label>("code-validate");
+            var passwordValidationLabel = resetPassword.Q<Label>("password-validate");
+            var passwordLengthValidationLabel = resetPassword.Q<Label>("password-length-validate");
+            var passwordSpecialValidationLabel = resetPassword.Q<Label>("password-special-validate");
+            var passwordUpperValidationLabel = resetPassword.Q<Label>("password-upper-case-validate");
+            var passwordLowerValidationLabel = resetPassword.Q<Label>("password-lower-case-validate");
+            var passwordNumberValidationLabel = resetPassword.Q<Label>("password-number-validate");
+            var confirmPasswordValidationLabel = resetPassword.Q<Label>("confirm-password-validate");
+            
+            codeValidationLabel.style.display = DisplayStyle.None;
+            passwordValidationLabel.style.display = DisplayStyle.None;
+            passwordLengthValidationLabel.style.display = DisplayStyle.None;
+            passwordSpecialValidationLabel.style.display = DisplayStyle.None;
+            passwordUpperValidationLabel.style.display = DisplayStyle.None;
+            passwordLowerValidationLabel.style.display = DisplayStyle.None;
+            passwordNumberValidationLabel.style.display = DisplayStyle.None;
+            confirmPasswordValidationLabel.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// Hides the signup validation error Label associated with a forgot password button. Typically called when the user clicked.
+        /// </summary>
+        private void HideSignUpValidationError()
+        {
+            var signUp = GetPanelForState(UIState.SignUp);
+            
+            var emailValidationLabel = signUp.Q<Label>("email-validate");
+            var usernameValidationLabel = signUp.Q<Label>("username-validate");
+            var passwordValidationLabel = signUp.Q<Label>("password-validate");
+            var passwordLengthValidationLabel = signUp.Q<Label>("password-length-validate");
+            var passwordSpecialValidationLabel = signUp.Q<Label>("password-special-validate");
+            var passwordUpperValidationLabel = signUp.Q<Label>("password-upper-case-validate");
+            var passwordLowerValidationLabel = signUp.Q<Label>("password-lower-case-validate");
+            var passwordNumberValidationLabel = signUp.Q<Label>("password-number-validate");
+            var confirmPasswordValidationLabel = signUp.Q<Label>("confirm-password-validate");
+            
+            emailValidationLabel.style.display = DisplayStyle.None;
+            usernameValidationLabel.style.display = DisplayStyle.None;
+            passwordValidationLabel.style.display = DisplayStyle.None;
+            passwordLengthValidationLabel.style.display = DisplayStyle.None;
+            passwordSpecialValidationLabel.style.display = DisplayStyle.None;
+            passwordUpperValidationLabel.style.display = DisplayStyle.None;
+            passwordLowerValidationLabel.style.display = DisplayStyle.None;
+            passwordNumberValidationLabel.style.display = DisplayStyle.None;
+            confirmPasswordValidationLabel.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// Hides the confirmation password validation error Label associated with a forgot password button. Typically called when the user clicked.
+        /// </summary>
+        private void HideConfirmAccountValidationError()
+        {
+            var confirmAccount = GetPanelForState(UIState.ConfirmAccount);
+            
+            var codeValidationLabel = confirmAccount.Q<Label>("code-validate");
+            
+            codeValidationLabel.style.display = DisplayStyle.None;
+        }
+
         #endregion
 
         #region UI Utility Methods
 
         /// <summary>
-        /// Shows the confirmation UI with the specified username
+        /// Shows the SignIn UI panel
         /// </summary>
+        public void ShowSignInUI()
+        {
+            SwitchUIState(UIState.SignIn);
+        }
+        
+        /// <summary>
+        /// Shows the Confirmation Account UI panel and updates its information label with the provided username.
+        /// </summary>
+        /// <param name="username">The username to display.</param>
         public void ShowConfirmationUI(string username)
         {
             SwitchUIState(UIState.ConfirmAccount);
@@ -838,8 +1259,9 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Shows the reset password UI with the specified username
+        /// Shows the Reset Password UI panel and updates its information label with the provided username (or email used for reset).
         /// </summary>
+        /// <param name="username">The identifier (username/email) to display.</param>
         public void ShowResetPasswordUI(string username)
         {
             SwitchUIState(UIState.ResetPassword);
@@ -849,7 +1271,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Shows the loading indicator
+        /// Shows the loading indicator visual element.
         /// </summary>
         private void ShowLoader()
         {
@@ -857,7 +1279,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Hides the loading indicator
+        /// Hides the loading indicator visual element.
         /// </summary>
         private void HideLoader()
         {
@@ -865,7 +1287,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Updates the loading animation
+        /// Updates the progress of the circular loading animation if the loader is visible.
         /// </summary>
         private void UpdateLoader()
         {
@@ -876,7 +1298,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         }
 
         /// <summary>
-        /// Loads remembered account information if available
+        /// Loads saved account data (if any) using RememberAccount and populates the Sign In fields. Sets the 'Remember Me' toggle state.
         /// </summary>
         private void LoadRememberedAccount()
         {

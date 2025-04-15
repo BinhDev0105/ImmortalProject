@@ -1,6 +1,6 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Game.Core/UI%20Toolkit/LoadingBar.uss?fileID=7433441132597879392&amp;guid=bab3d0f35e77c784f8e1bbec46e9ee04&amp;type=3#LoadingBar" />
-    <ui:VisualElement style="flex-grow: 1; width: 70%; height: 100%;">
+    <ui:VisualElement style="flex-grow: 1; width: 75%; height: 100%;">
         <ui:ProgressBar value="0.22" title="22%" name="loading-bar" high-value="1" style="position: absolute; flex-direction: column-reverse; bottom: 24px; align-self: center; left: auto; width: 80%; flex-shrink: 1; flex-grow: 1;" />
     </ui:VisualElement>
 </ui:UXML>

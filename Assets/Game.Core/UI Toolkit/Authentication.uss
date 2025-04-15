@@ -74,6 +74,18 @@ VisualElement > #sign-in > VisualElement > #sign-up-ui-button:hover {
     scale: 1.05 1.05;
 }
 
+VisualElement > #sign-in > #exit-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #sign-in > #exit-button:hover {
+    scale: 1.05 1.05;
+}
+
 VisualElement > #forgot-password > #email > #unity-text-input {
     color: rgb(0, 178, 255);
     --unity-cursor-color: rgb(0, 128, 255);
@@ -235,6 +247,18 @@ VisualElement > #sign-up > VisualElement > #sign-in-ui-button:hover {
     scale: 1.05 1.05;
 }
 
+VisualElement > #sign-up > #exit-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #sign-up > #exit-button:hover {
+    scale: 1.05 1.05;
+}
+
 VisualElement > #confirm-account > #code > #unity-text-input {
     color: rgb(0, 178, 255);
     --unity-cursor-color: rgb(0, 128, 255);
@@ -280,3 +304,4 @@ VisualElement > #confirm-account > #back-button {
 VisualElement > #confirm-account > #back-button:hover {
     scale: 1.05 1.05;
 }
+

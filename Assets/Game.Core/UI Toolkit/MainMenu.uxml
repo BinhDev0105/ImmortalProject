@@ -1,0 +1,14 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Game.Core/UI%20Toolkit/MainMenu.uss?fileID=7433441132597879392&amp;guid=09ff8932ac13bff4e8e26372279cb7e7&amp;type=3#MainMenu" />
+    <ui:VisualElement style="flex-grow: 1; align-self: stretch; justify-content: center;">
+        <ui:VisualElement name="main-menu" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-self: flex-end; padding-top: 1%; padding-right: 2%; padding-bottom: 2%; padding-left: 2%; width: 25%;">
+            <ui:Label text="uid:0000000000" style="flex-shrink: 1; position: absolute; align-self: flex-end; bottom: 0; color: rgb(255, 255, 255);" />
+            <ui:Button text="Create Lobby" name="create-lobby-button" />
+            <ui:Button text="Join Lobby" name="join-lobby-button" />
+            <ui:Button text="Character" name="character-button" />
+            <ui:Button text="Setting" name="setting-button" />
+            <ui:Button text="Sign out" name="sign-out-button" />
+            <ui:Button text="Sign out &amp; Exit" name="sign-out-and-exit-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

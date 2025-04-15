@@ -21,6 +21,7 @@
                 <ui:Button text="Forgot your password?" name="forgot-password-ui-button" />
             </ui:VisualElement>
             <ui:Button text="Sign in" name="sign-in-button" class="sign-in-button" />
+            <ui:Button text="Exit" name="exit-button" class="sign-in-button" />
             <ui:VisualElement style="flex-direction: row; flex-shrink: 1; align-self: stretch; display: flex; justify-content: center;">
                 <ui:Label text="New user?" style="flex-shrink: 1; flex-grow: 0; -unity-text-align: middle-right; color: rgb(0, 178, 255);" />
                 <ui:Button text="Create an account" name="sign-up-ui-button" class="sign-up-ui-button" />
@@ -87,6 +88,7 @@
                 <ui:Button text="Forgot your password?" enable-rich-text="true" style="flex-shrink: 1; flex-grow: 0; font-size: 14; -unity-font-style: normal; padding-left: 4px; padding-right: 4px; display: flex; align-self: auto; justify-content: flex-start; height: 0; padding-top: 0; padding-bottom: 0; margin-top: 0; margin-bottom: 0; border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; background-color: rgba(188, 188, 188, 0);" />
             </ui:VisualElement>
             <ui:Button text="Sign up" name="sign-up-button" class="sign-up-button" style="flex-shrink: 1; align-self: stretch;" />
+            <ui:Button text="Exit" name="exit-button" class="sign-up-button" style="flex-shrink: 1; align-self: stretch;" />
             <ui:VisualElement style="flex-grow: 0; flex-direction: row; flex-shrink: 1; justify-content: center;">
                 <ui:Label text="Have an account already?" style="flex-shrink: 1; flex-grow: 0; -unity-text-align: middle-right; font-size: 14; color: rgb(0, 178, 255); align-self: stretch;" />
                 <ui:Button text="Sign in" name="sign-in-ui-button" class="sign-in-ui-button" />

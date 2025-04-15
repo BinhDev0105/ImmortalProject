@@ -30,15 +30,6 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         
         #endregion
 
-        #region Events
-
-        // Event delegates for success callbacks
-        public delegate void AuthenticationSuccess();
-        public event AuthenticationSuccess OnPasswordChangeSuccess;
-        public event AuthenticationSuccess OnAccountConfirmationSuccess;
-
-        #endregion
-
         #region Unity Lifecycle
 
         private void Awake()
@@ -60,7 +51,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             _unityService.InitializeAsync();
             
             // Setup UI controller
-            _uiController = FindObjectOfType<AuthenticationUIController>();
+            _uiController = FindAnyObjectByType<AuthenticationUIController>();
             if (_uiController == null)
             {
                 Log.Error("AuthenticationUIController not found in scene");
@@ -110,6 +101,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (cognitoTask.IsFaulted)
             {
                 Log.Error($"Cognito sign-in failed: {cognitoTask.Exception?.Message}");
+                _uiController.HandleSignInSuccess();
                 yield break;
             }
 
@@ -162,7 +154,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
                 Log.Error("Unity authentication returned false");
                 yield break;
             }
-
+            _uiController.HandleSignInSuccess();
             Log.Info($"User {username} successfully authenticated");
         }
 
@@ -187,12 +179,14 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (task.IsFaulted)
             {
                 Log.Error($"Sign-up failed: {task.Exception?.Message}");
+                _uiController.HandleSignUpSuccess();
                 yield break;
             }
 
             if (task.Result != null)
             {
                 Log.Info($"User {username} successfully registered");
+                _uiController.HandleSignUpSuccess();
                 _uiController.ShowConfirmationUI(username);
             }
             else
@@ -204,7 +198,7 @@ namespace Game.Core.Scripts.OnlineService.Authentication
         /// <summary>
         /// Initiates the password reset process
         /// </summary>
-        public IEnumerator ResetPassword(string username)
+        public IEnumerator ForgotPassword(string username)// email
         {
             Task<ForgotPasswordResponse> task;
             try
@@ -222,12 +216,14 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (task.IsFaulted)
             {
                 Log.Error($"Password reset failed: {task.Exception?.Message}");
+                _uiController.HandleResetPasswordSuccess();
                 yield break;
             }
 
             if (task.Result != null)
             {
                 Log.Info($"Password reset initiated for user {username}");
+                _uiController.HandleResetPasswordSuccess();
                 _uiController.ShowResetPasswordUI(username);
             }
             else
@@ -257,13 +253,15 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (task.IsFaulted)
             {
                 Log.Error($"Change password failed: {task.Exception?.Message}");
+                _uiController.HandlePasswordChangeSuccess();
                 yield break;
             }
 
             if (task.Result != null)
             {
                 Log.Info($"Password successfully changed for user {username}");
-                OnPasswordChangeSuccess?.Invoke();
+                _uiController.HandlePasswordChangeSuccess();
+                _uiController.ShowSignInUI();
             }
             else
             {
@@ -292,13 +290,15 @@ namespace Game.Core.Scripts.OnlineService.Authentication
             if (task.IsFaulted)
             {
                 Log.Error($"Account confirmation failed: {task.Exception?.Message}");
+                _uiController.HandleAccountConfirmationSuccess();
                 yield break;
             }
 
             if (task.Result != null)
             {
                 Log.Info($"Account successfully confirmed for user {username}");
-                OnAccountConfirmationSuccess?.Invoke();
+                _uiController.HandleAccountConfirmationSuccess();
+                _uiController.ShowSignInUI();
             }
             else
             {

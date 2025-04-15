@@ -1,0 +1,71 @@
+VisualElement > #main-menu > #create-lobby-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #create-lobby-button:hover {
+    scale: 1.05 1.05;
+}
+
+VisualElement > #main-menu > #join-lobby-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #join-lobby-button:hover {
+    scale: 1.05 1.05;
+}
+
+VisualElement > #main-menu > #character-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #character-button:hover {
+    scale: 1.05 1.05;
+}
+
+VisualElement > #main-menu > #setting-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #setting-button:hover {
+    scale: 1.05 1.05;
+}
+
+VisualElement > #main-menu > #sign-out-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #sign-out-button:hover {
+    scale: 1.05 1.05;
+}
+
+VisualElement > #main-menu > #sign-out-and-exit-button {
+    align-self: stretch;
+    flex-shrink: 1;
+    color: rgb(0, 178, 255);
+    background-color: rgb(26, 26, 26);
+    -unity-font-style: bold;
+}
+
+VisualElement > #main-menu > #sign-out-and-exit-button:hover {
+    scale: 1.05 1.05;
+}
